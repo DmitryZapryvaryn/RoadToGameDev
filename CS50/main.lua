@@ -35,7 +35,7 @@ function love.load()
 	push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT,
 	{
 		fullscreen = false,
-		resizable = false,
+		resizable = true,
 		vsync = true
 	})
 
@@ -47,9 +47,15 @@ function love.load()
 	player1Score = 0
 	player2Score = 0
 
+	servingPlayer = math.random(2)
+
 	winningPlayer = 0
 	
 	gameState = 'start'
+end
+
+function love.resize(w, h)
+	push:resize(w, h)
 end
 
 function love.update(dt)
@@ -126,7 +132,7 @@ function love.update(dt)
 				gameState = 'serve'
 				ball:reset()
 			end
-			
+
 			sounds['score']:play()
 		end
 	end
