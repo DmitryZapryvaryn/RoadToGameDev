@@ -137,7 +137,9 @@ function love.update(dt)
 		end
 	end
 
-	-- player1.y = ball.y - player1.width
+	-- AI :D
+	player1.y = ball.y - player1.width
+
 	if love.keyboard.isDown('w') then
 		player1.dy = -PADDLE_SPEED
 	elseif love.keyboard.isDown('s') then
@@ -194,7 +196,7 @@ end
 function love.draw()
 	push:apply('start')
 	
-	love.graphics.clear(40/255, 45/255, 52/255, 255/255) -- values [0, 1]
+	love.graphics.clear(40/255, 45/255, 52/255, 255/255) -- values [0, 1] - Normalization
 
 	
 	if gameState == 'start' then
