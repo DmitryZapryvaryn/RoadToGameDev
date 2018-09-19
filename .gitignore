@@ -24,3 +24,4 @@ OpenGL/OpenGL/x64/Debug/
 OpenGL/OpenGL/Debug/
 CS50/assignments/
 CS50/libs/
+*.lnk
