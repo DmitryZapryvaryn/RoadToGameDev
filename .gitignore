@@ -18,5 +18,9 @@ CS50/.vscode/
 Bfxr/
 .vs
 .vscode
+OpenGL/OpenGL/OpenGL/Debug/
+OpenGL/OpenGL/OpenGL/x64/Debug/
+OpenGL/OpenGL/x64/Debug/
+OpenGL/OpenGL/Debug/
 CS50/assignments/
 CS50/libs/
