@@ -1,4 +1,7 @@
 push = require 'push'
+Class = require("class")
+
+require 'Bird'
 
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
@@ -15,6 +18,8 @@ local ground = love.graphics.newImage('ground.png')
 local groundScroll = 0
 local GROUND_SCROLL_SPEED = 60
 
+local bird = Bird()
+
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
 
@@ -26,6 +31,9 @@ function love.load()
 		resizable = true,
 		vsync = true
     })
+    
+    -- table for storing keys which were pressed
+    love.keyboard.keysPressed = {}
 end
 
 function love.resize(w, h)
@@ -37,22 +45,34 @@ function love.update(dt)
      % BACKGROUND_LOOPING_POINT
     groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt)
      % VIRTUAL_WIDTH
+
+    bird:update(dt)
+    
+    love.keyboard.keysPressed = {}
 end
 
 function love.keypressed(key)
-	if key == 'escape' then
+    love.keyboard.keysPressed[key] = true
 
-		love.event.quit()	
+	if key == 'escape' then
+        love.event.quit()
 	end
+end
+
+-- override function wasPressed to grant access outside main.lua
+function love.keyboard.wasPressed(key)
+    return love.keyboard.keysPressed[key]
 end
 
 function love.draw()
     push:start()
 
     love.graphics.clear(40/255, 45/255, 52/255, 255/255) -- values [0, 1] - Normalization
-
+    
     love.graphics.draw(background, -backgroundScroll, 0)
     love.graphics.draw(ground, -groundScroll, VIRTUAL_HEIGHT - ground:getHeight())
-    
+
+    bird:render()
+
     push:finish()
 end
