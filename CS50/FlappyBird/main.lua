@@ -3,6 +3,10 @@ Class = require("class")
 
 require 'Bird'
 
+require 'Pipe'
+
+require 'PipePair'
+
 WINDOW_WIDTH = 1280
 WINDOW_HEIGHT = 720
 
@@ -19,11 +23,20 @@ local groundScroll = 0
 local GROUND_SCROLL_SPEED = 60
 
 local bird = Bird()
+local pipePairs = {}
+
+local spawnTimer = 0
+local spawnDelay = 2
+
+-- init our last recorded Y value for a gap placement to base other gaps
+local lastY = -PIPE_HEIGHT + math.random(80) + 20
 
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
 
     love.window.setTitle('Flappy Bird')
+
+    math.randomseed(os.time())
 
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT,
 	{
@@ -46,8 +59,29 @@ function love.update(dt)
     groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt)
      % VIRTUAL_WIDTH
 
+    spawnTimer = spawnTimer + dt
+
+    if spawnTimer > spawnDelay then
+        local y = math.max( -PIPE_HEIGHT + 10, 
+            math.min(lastY + math.random(-20, 20), VIRTUAL_HEIGHT - 90 - PIPE_HEIGHT))
+        lastY = y
+
+        table.insert(pipePairs, PipePair(y))
+        spawnTimer = 0
+        spawnDelay = math.random(2, 3)
+    end
+
+
     bird:update(dt)
-    
+
+    for k, pipePair in pairs(pipePairs) do
+        pipePair:update(dt)
+
+        if pipePair.remove then
+            table.remove(pipePairs, k)
+        end
+    end
+
     love.keyboard.keysPressed = {}
 end
 
@@ -70,9 +104,14 @@ function love.draw()
     love.graphics.clear(40/255, 45/255, 52/255, 255/255) -- values [0, 1] - Normalization
     
     love.graphics.draw(background, -backgroundScroll, 0)
+
+    for k, pipePair in pairs(pipePairs) do
+        pipePair:render()
+    end
+
     love.graphics.draw(ground, -groundScroll, VIRTUAL_HEIGHT - ground:getHeight())
 
     bird:render()
-
+    
     push:finish()
 end
