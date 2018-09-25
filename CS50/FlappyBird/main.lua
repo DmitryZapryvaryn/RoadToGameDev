@@ -31,6 +31,8 @@ local spawnDelay = 2
 -- init our last recorded Y value for a gap placement to base other gaps
 local lastY = -PIPE_HEIGHT + math.random(80) + 20
 
+local scrolling = true
+
 function love.load()
     love.graphics.setDefaultFilter('nearest', 'nearest')
 
@@ -54,6 +56,7 @@ function love.resize(w, h)
 end
 
 function love.update(dt)
+    if scrolling then
     backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt)
      % BACKGROUND_LOOPING_POINT
     groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt)
@@ -62,13 +65,13 @@ function love.update(dt)
     spawnTimer = spawnTimer + dt
 
     if spawnTimer > spawnDelay then
-        local y = math.max( -PIPE_HEIGHT + 10, 
-            math.min(lastY + math.random(-20, 20), VIRTUAL_HEIGHT - 90 - PIPE_HEIGHT))
+        local y =  math.max( -PIPE_HEIGHT + 20, 
+            math.min(lastY + math.random(-20, 20), VIRTUAL_HEIGHT - 80 - PIPE_HEIGHT))
         lastY = y
 
         table.insert(pipePairs, PipePair(y))
         spawnTimer = 0
-        spawnDelay = math.random(2, 3)
+        spawnDelay = math.random() + math.random(2, 5)
     end
 
 
@@ -77,12 +80,20 @@ function love.update(dt)
     for k, pipePair in pairs(pipePairs) do
         pipePair:update(dt)
 
+        for l, pipe in pairs(pipePair.pipes) do
+            if bird:collides(pipe) then
+                scrolling = false
+            end
+        end
+
         if pipePair.remove then
             table.remove(pipePairs, k)
         end
     end
+end
 
     love.keyboard.keysPressed = {}
+
 end
 
 function love.keypressed(key)
