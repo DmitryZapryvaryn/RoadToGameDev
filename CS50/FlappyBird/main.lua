@@ -29,7 +29,7 @@ local ground = love.graphics.newImage('resources/images/ground.png')
 local groundScroll = 0
 local GROUND_SCROLL_SPEED = 60
 
-local scrolling = true
+scrolling = true
 
 function love.load()
     math.randomseed(os.time())
@@ -74,6 +74,7 @@ function love.load()
     
     -- table for storing keys which were pressed
     love.keyboard.keysPressed = {}
+    love.mouse.buttonsPressed = {}
 end
 
 function love.resize(w, h)
@@ -89,7 +90,11 @@ function love.update(dt)
     gStateMachine:update(dt)
 
     love.keyboard.keysPressed = {}
+    love.mouse.buttonsPressed = {}
+end
 
+function love.mousepressed(x, y, button)
+    love.mouse.buttonsPressed[button] = true
 end
 
 function love.keypressed(key)
@@ -98,6 +103,10 @@ function love.keypressed(key)
 	if key == 'escape' then
         love.event.quit()
 	end
+end
+
+function love.mouse.wasPressed(button)
+    return love.mouse.buttonsPressed[button]
 end
 
 -- override function wasPressed to grant access outside main.lua
