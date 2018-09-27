@@ -32,6 +32,8 @@ local GROUND_SCROLL_SPEED = 60
 local scrolling = true
 
 function love.load()
+    math.randomseed(os.time())
+
     love.graphics.setDefaultFilter('nearest', 'nearest')
 
     love.window.setTitle('Flappy Bird')
@@ -42,7 +44,18 @@ function love.load()
     hugeFont = love.graphics.newFont('resources/fonts/flappy.ttf', 56)
     love.graphics.setFont(flappyFont)
 
-    math.randomseed(os.time())
+    sounds = {
+		['explosion'] = love.audio.newSource('resources/sounds/explosion.wav', 'static'),
+		['hurt'] = love.audio.newSource('resources/sounds/hurt.wav', 'static'),
+        ['jump'] = love.audio.newSource('resources/sounds/jump.wav', 'static'),
+        ['score'] = love.audio.newSource('resources/sounds/score.wav', 'static'),
+
+
+        ['music'] = love.audio.newSource('resources/sounds/marios_way.mp3', 'static')
+    }
+
+    sounds['music']:setLooping(true)
+    sounds['music']:play()
 
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT,
 	{
