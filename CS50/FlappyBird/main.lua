@@ -49,7 +49,7 @@ function love.load()
 		['hurt'] = love.audio.newSource('resources/sounds/hurt.wav', 'static'),
         ['jump'] = love.audio.newSource('resources/sounds/jump.wav', 'static'),
         ['score'] = love.audio.newSource('resources/sounds/score.wav', 'static'),
-
+        ['pause'] = love.audio.newSource('resources/sounds/pause.wav', 'static'),
 
         ['music'] = love.audio.newSource('resources/sounds/marios_way.mp3', 'static')
     }
@@ -82,10 +82,15 @@ function love.resize(w, h)
 end
 
 function love.update(dt)
-    backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt)
-     % BACKGROUND_LOOPING_POINT
-    groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt)
-     % VIRTUAL_WIDTH
+    if scrolling then
+        sounds['music']:play()
+        backgroundScroll = (backgroundScroll + BACKGROUND_SCROLL_SPEED * dt)
+         % BACKGROUND_LOOPING_POINT
+        groundScroll = (groundScroll + GROUND_SCROLL_SPEED * dt)
+         % VIRTUAL_WIDTH    
+    else
+        sounds['music']:pause()
+    end
 
     gStateMachine:update(dt)
 
