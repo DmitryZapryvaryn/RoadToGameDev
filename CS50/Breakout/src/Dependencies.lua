@@ -5,10 +5,12 @@ require 'src/constants'
 
 require 'src/Paddle'
 require 'src/Ball'
+require 'src/Brick'
 
 require 'src/StateMachine'
 
 require 'src/Util'
+require 'src/LevelMaker'
 
 require 'src/states/BaseState'
 require 'src/states/StartState'

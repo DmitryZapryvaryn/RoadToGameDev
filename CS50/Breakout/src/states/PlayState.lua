@@ -3,6 +3,9 @@ PlayState = Class{__includes = BaseState}
 function PlayState:init()
     self.paddle = Paddle()
     self.ball = Ball(math.random(7))
+
+    self.bricks = LevelMaker:createMap()
+
     self.paused = false
 end
 
@@ -24,9 +27,55 @@ function PlayState:update(dt)
     self.ball:update(dt)
 
     if self.ball:collides(self.paddle) then
-        self.ball.y = self.paddle.y - self.ball.width
+        self.ball.y = self.paddle.y - self.ball.height
         self.ball.dy = -self.ball.dy
         gSounds['paddle-hit']:play()
+    end
+
+    for k, brick in pairs(self.bricks) do
+        if brick.inPlay and self.ball:collides(brick) then
+            brick:hit()
+
+            --
+            -- collision code for bricks
+            --
+            -- we check to see if the opposite side of our velocity is outside of the brick;
+            -- if it is, we trigger a collision on that side. else we're within the X + width of
+            -- the brick and should check to see if the top or bottom edge is outside of the brick,
+            -- colliding on the top or bottom accordingly 
+            --
+
+            -- left edge; only check if we're moving right, and offset the check by a couple of pixels
+            -- so that flush corner hits register as Y flips, not X flips
+            if self.ball.x + 2 < brick.x and self.ball.dx > 0 then
+                
+                -- flip x velocity and reset position outside of brick
+                self.ball.dx = -self.ball.dx
+                self.ball.x = brick.x - 8
+            
+            -- right edge; only check if we're moving left, , and offset the check by a couple of pixels
+            -- so that flush corner hits register as Y flips, not X flips
+            elseif self.ball.x + 6 > brick.x + brick.width and self.ball.dx < 0 then
+                
+                -- flip x velocity and reset position outside of brick
+                self.ball.dx = -self.ball.dx
+                self.ball.x = brick.x + 32
+            
+            -- top edge if no X collisions, always check
+            elseif self.ball.y < brick.y then
+                
+                -- flip y velocity and reset position outside of brick
+                self.ball.dy = -self.ball.dy
+                self.ball.y = brick.y - 8
+            
+            -- bottom edge if no X collisions or top collision, last possibility
+            else
+                
+                -- flip y velocity and reset position outside of brick
+                self.ball.dy = -self.ball.dy
+                self.ball.y = brick.y + 16
+            end
+        end
     end
 
     if love.keyboard.wasPressed('escape') then
@@ -37,6 +86,10 @@ end
 function PlayState:render()
     self.paddle:render()
     self.ball:render()
+
+    for k, brick in pairs(self.bricks) do
+       brick:render()
+    end
 
     if self.paused then
         love.graphics.setFont(gFonts['large'])
