@@ -9,7 +9,12 @@ function LevelMaker:createMap()
     for y = 1, numRows do
         for x = 1, numCols do
             brick = Brick(
-                (x-1) * 32 + 8,
+                -- x coordinate
+                (x-1)
+                * 32
+                + 8
+                + (13 - numCols) * 16,
+                -- y coordinate
                 y * 16
             )
             table.insert(bricks, brick)
