@@ -29,6 +29,13 @@ function PlayState:update(dt)
     if self.ball:collides(self.paddle) then
         self.ball.y = self.paddle.y - self.ball.height
         self.ball.dy = -self.ball.dy
+
+        if self.ball.x < self.paddle.x + (self.paddle.width / 2) and self.paddle.dx < 0 then
+            self.ball.dx = -50 + -(8 * (self.paddle.x + (self.paddle.width / 2) -  self.ball.x))
+        elseif self.ball.x > self.paddle.x + (self.paddle.width / 2) and self.paddle.dx > 0 then
+            self.ball.dx = 50 + (8 * math.abs(self.paddle.x + (self.paddle.width / 2) -  self.ball.x))
+        end
+
         gSounds['paddle-hit']:play()
     end
 
@@ -51,7 +58,7 @@ function PlayState:update(dt)
                 
                 -- flip x velocity and reset position outside of brick
                 self.ball.dx = -self.ball.dx
-                self.ball.x = brick.x - 8
+                self.ball.x = brick.x - self.ball.width
             
             -- right edge; only check if we're moving left, , and offset the check by a couple of pixels
             -- so that flush corner hits register as Y flips, not X flips
@@ -59,21 +66,21 @@ function PlayState:update(dt)
                 
                 -- flip x velocity and reset position outside of brick
                 self.ball.dx = -self.ball.dx
-                self.ball.x = brick.x + 32
+                self.ball.x = brick.x + brick.width
             
             -- top edge if no X collisions, always check
             elseif self.ball.y < brick.y then
                 
                 -- flip y velocity and reset position outside of brick
                 self.ball.dy = -self.ball.dy
-                self.ball.y = brick.y - 8
+                self.ball.y = brick.y - self.ball.height
             
             -- bottom edge if no X collisions or top collision, last possibility
             else
                 
                 -- flip y velocity and reset position outside of brick
                 self.ball.dy = -self.ball.dy
-                self.ball.y = brick.y + 16
+                self.ball.y = brick.y + brick.height
             end
         end
     end
