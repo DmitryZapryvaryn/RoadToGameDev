@@ -1,6 +1,6 @@
 Paddle = Class{}
 
-function Paddle:init()
+function Paddle:init(skin)
     self.x = VIRTUAL_WIDTH / 2 - 32
     self.y = VIRTUAL_HEIGHT - 32
 
@@ -9,7 +9,7 @@ function Paddle:init()
 
     self.dx = 0
 
-    self.skin = 1
+    self.skin = skin
 
     self.size = 2
 end

@@ -1,10 +1,14 @@
 PlayState = Class{__includes = BaseState}
 
-function PlayState:init()
-    self.paddle = Paddle()
-    self.ball = Ball(math.random(7))
+function PlayState:enter(params)
+    self.paddle = params.paddle
+    self.ball = params.ball
+    self.bricks = params.bricks
+    self.health = params.health
+    self.score = params.score
 
-    self.bricks = LevelMaker:createMap()
+    self.ball.dx = math.random( -100, 100 )
+    self.ball.dy = -100
 
     self.paused = false
 end
@@ -30,10 +34,13 @@ function PlayState:update(dt)
         self.ball.y = self.paddle.y - self.ball.height
         self.ball.dy = -self.ball.dy
 
-        if self.ball.x < self.paddle.x + (self.paddle.width / 2) and self.paddle.dx < 0 then
-            self.ball.dx = -50 + -(8 * (self.paddle.x + (self.paddle.width / 2) -  self.ball.x))
-        elseif self.ball.x > self.paddle.x + (self.paddle.width / 2) and self.paddle.dx > 0 then
-            self.ball.dx = 50 + (8 * math.abs(self.paddle.x + (self.paddle.width / 2) -  self.ball.x))
+        -- if we hit the paddle on its left side while moving left... and self.paddle.dx < 0
+        if self.ball.x + self.ball.width < self.paddle.x + (self.paddle.width / 2)  then
+            self.ball.dx = -math.pow((self.paddle.x + (self.paddle.width / 2) - (self.ball.x + (self.ball.width / 2))), 2) * ANGLE_MULTIPLIER
+            
+        -- else if we hit the paddle on its right side while moving right... and self.paddle.dx > 0
+        elseif self.ball.x > self.paddle.x + (self.paddle.width / 2)  then
+            self.ball.dx = math.pow(math.abs(self.paddle.x + (self.paddle.width / 2) - (self.ball.x + (self.ball.width / 2))), 2) * ANGLE_MULTIPLIER
         end
 
         gSounds['paddle-hit']:play()
@@ -82,6 +89,10 @@ function PlayState:update(dt)
                 self.ball.dy = -self.ball.dy
                 self.ball.y = brick.y + brick.height
             end
+
+            self.ball.dy = self.ball.dy * 1.02
+
+            break
         end
     end
 
