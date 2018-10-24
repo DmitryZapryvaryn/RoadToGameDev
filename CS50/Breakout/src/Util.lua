@@ -83,3 +83,14 @@ function GenerateQuadsBalls(atlas)
 
     return quads
 end
+
+function GenerateQuadsHearts(atlas)
+    local x = 128
+    local y = 48
+
+    for i = 0, 1 do
+        quads[counter] = love.graphics.newQuad(x, y, 10, 9, atlas:getDimensions())
+        counter = counter + 1
+        x = x + 10
+    end
+end

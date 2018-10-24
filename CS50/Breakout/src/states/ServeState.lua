@@ -36,5 +36,8 @@ function ServeState:render()
 
     for k, brick in pairs(self.bricks) do
         brick:render()
-     end
+    end
+
+    renderScore(self.score)
+    renderHearts(self.health)
 end

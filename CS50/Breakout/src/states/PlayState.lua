@@ -49,7 +49,7 @@ function PlayState:update(dt)
     for k, brick in pairs(self.bricks) do
         if brick.inPlay and self.ball:collides(brick) then
             brick:hit()
-
+            self.score = self.score + 50
             --
             -- collision code for bricks
             --
@@ -96,6 +96,23 @@ function PlayState:update(dt)
         end
     end
 
+    if self.ball.y > VIRTUAL_HEIGHT then
+        self.health = self.health - 1
+
+        gSounds['hurt']:play()
+
+        if self.health == 0 then
+            -- TODO: change state to high score screen
+        else
+            gStateMachine:change('serve', {
+                paddle = self.paddle,
+                bricks = self.bricks,
+                health = self.health,
+                score = self.score
+            })
+        end
+    end
+
     if love.keyboard.wasPressed('escape') then
         love.event.quit()
     end
@@ -113,4 +130,7 @@ function PlayState:render()
         love.graphics.setFont(gFonts['large'])
         love.graphics.printf("PAUSED", 0, VIRTUAL_HEIGHT / 2 - 16, VIRTUAL_WIDTH, 'center')
     end
+    
+    renderScore(self.score)
+    renderHearts(self.health)
 end

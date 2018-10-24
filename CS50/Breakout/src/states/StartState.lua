@@ -16,7 +16,7 @@ function StartState:update(dt)
             gStateMachine:change('serve', {
                 paddle = Paddle(1),
                 bricks = LevelMaker:createMap(),
-                health = 3,
+                health = MAX_HEALTH,
                 score = 0
             })
         end

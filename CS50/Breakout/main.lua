@@ -26,6 +26,7 @@ function love.load()
         ['paddles'] = GenerateQuadsPaddles(gTextures['main']),
         ['balls'] = GenerateQuadsBalls(gTextures['main']),
         ['bricks'] = GenerateQuadsBricks(gTextures['main']),
+        ['hearts'] = GenerateQuads(gTextures['hearts'], 10, 9),
     }
 
     push:setupScreen(VIRTUAL_WIDTH, VIRTUAL_HEIGHT, WINDOW_WIDTH, WINDOW_HEIGHT,
@@ -99,7 +100,7 @@ function love.draw()
     gStateMachine:render()
 
     displayFPS()
-   
+
     push:finish()
 end
 
@@ -107,4 +108,29 @@ function displayFPS()
 	love.graphics.setFont(gFonts['small'])
 	love.graphics.setColor(0 , 1, 0, 1)
 	love.graphics.print('FPS:' .. tostring(love.timer.getFPS()), 5, 5)
+end
+
+function renderHearts(health)
+    local xHearts = VIRTUAL_WIDTH - (MAX_HEALTH * 10) - 10
+    local yHearts = 5
+
+    for i = 1, health do
+        love.graphics.draw(gTextures['hearts'], gFrames['hearts'][1], xHearts, yHearts)
+        xHearts = xHearts + 11
+    end
+
+    for i = 1, MAX_HEALTH - health do
+        love.graphics.draw(gTextures['hearts'], gFrames['hearts'][2], xHearts, yHearts)
+        xHearts = xHearts + 11
+    end
+end
+
+--[[
+    Simply renders the player's score at the top right, with left-side padding
+    for the score number.
+]]
+function renderScore(score)
+    love.graphics.setFont(gFonts['small'])
+    love.graphics.print('Score:', VIRTUAL_WIDTH / 2 , 5)
+    love.graphics.printf(tostring(score),  VIRTUAL_WIDTH / 2 + 5, 5, 40, 'right')
 end
